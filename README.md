@@ -1,4 +1,4 @@
-Tis repository aims at creating a full api for ecommerce store. 
+This repository aims at creating a full api for ecommerce store. 
 Key features include:
 1. Authentication(signup, signin, reset password, delete account) - ONGOING
 2. Account verification through email.
