@@ -1,6 +1,6 @@
-use actix_web::{App, HttpServer};
+use actix_web::{web::ServiceConfig, App};
+use shuttle_actix_web::ShuttleActixWeb;
 use dotenvy::dotenv;
-use std::env;
 
 mod handlers;
 mod models;
@@ -8,20 +8,16 @@ mod services;
 mod schema;
 mod utils;
 
-#[actix_web::main]
-async fn main() -> std::io::Result<()> {
+#[shuttle_runtime::main]
+async fn main() -> ShuttleActixWeb<impl FnOnce(&mut ServiceConfig) + Send + Clone + 'static> {
     dotenv().ok();
-    let host = env::var("HOST").unwrap_or_else(|_| "127.0.0.1".to_string());
-    let port = env::var("PORT").unwrap_or_else(|_| "8080".to_string());
 
-    println!("Starting server at http://{}:{}", host, port);
+    // Actix Web configuration function
+    let config = move |cfg: &mut ServiceConfig| {
+        cfg.service(handlers::user_handler::auth::create_user_endpoint);
+        cfg.service(handlers::user_handler::users::fetch_all_users);
+        cfg.service(handlers::user_handler::users::get_user_by_id);
+    };
 
-    HttpServer::new(|| {
-        App::new()
-            .service(handlers::user_handler::create_user_endpoint)
-            .service(handlers::user_handler::fetch_all_users)
-    })
-    .bind(format!("{}:{}", host, port))?
-    .run()
-    .await
+    Ok(config.into())
 }

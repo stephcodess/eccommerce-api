@@ -1,9 +1,8 @@
-use actix_web::{get, post, web, HttpResponse, Responder};
+use actix_web::{post, web, HttpResponse, Responder};
 use auth_flow::establish_connection;
 use crate::services::auth::create_user::create_new_user;
-use crate::models::user_model::{NewUser, Users};
+use crate::models::user_model::NewUser;
 use serde::Deserialize;
-use diesel::prelude::*;
 
 #[derive(Deserialize)]
 pub struct CreateUserRequest {
@@ -15,7 +14,7 @@ pub struct CreateUserRequest {
     pub phone_number: Option<String>,
 }
 
-#[post("/users")]
+#[post("/signup")]
 async fn create_user_endpoint(user_data: web::Json<CreateUserRequest>) -> impl Responder {
     let conn = &mut establish_connection();
 
@@ -38,20 +37,3 @@ async fn create_user_endpoint(user_data: web::Json<CreateUserRequest>) -> impl R
     }
 }
 
-#[get("/users")]
-async fn fetch_all_users() -> impl Responder {
-    use crate::schema::users::dsl::*;
-
-    let conn = &mut establish_connection();
-
-    match users
-        .limit(10) // Limit the number of users returned
-        .load::<Users>(conn)
-    {
-        Ok(results) => HttpResponse::Ok().json(results),
-        Err(err) => {
-            eprintln!("Failed to fetch users: {}", err);
-            HttpResponse::InternalServerError().body("Failed to fetch users")
-        }
-    }
-}

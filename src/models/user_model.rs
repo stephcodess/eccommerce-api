@@ -1,10 +1,11 @@
 use diesel::prelude::*;
 use diesel::Queryable;
 use chrono::NaiveDateTime;
+use serde::Deserialize;
 use serde::Serialize;
 
 // Struct for querying users from the database
-#[derive(Queryable, Selectable, Serialize)]
+#[derive(Queryable, Selectable, Serialize, Deserialize)]
 #[diesel(table_name = crate::schema::users)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
 pub struct Users {
