@@ -29,7 +29,7 @@ async fn create_user_endpoint(user_data: web::Json<CreateUserRequest>) -> impl R
     };
 
     match create_new_user(conn, new_user) {
-        Ok(user) => HttpResponse::Created().json(user), // Return the created user
+        Ok(user) => HttpResponse::Created().json(user),
         Err(err) => {
             eprintln!("Failed to create user: {}", err);
             HttpResponse::InternalServerError().body("Failed to create user")
