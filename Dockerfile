@@ -7,7 +7,7 @@ WORKDIR /app
 # Copy the Cargo manifest and source files to the container
 COPY Cargo.toml Cargo.lock ./
 COPY src ./src
-COPY .shuttle ./
+# COPY .shuttle ./
 
 # Build the project in release mode
 RUN cargo build --release
